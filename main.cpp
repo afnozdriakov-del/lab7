@@ -1,88 +1,171 @@
-#include <iostream> 
-using namespace std; 
+#include <iostream>
 
-int main() { 
+using namespace std;
 
-    int choice; 
+// ===== КОНСТАНТИ =====
+const int MIN_SIZE = 2;
+const int MAX_SIZE = 20;
 
-    do { 
+// ===== ПРОТОТИПИ ФУНКЦІЙ =====
+void showMenu();
+bool readSize(int &M, int &N);
+void inputMatrix(int a[][MAX_SIZE], int M, int N);
+void outputMatrix(const int a[][MAX_SIZE], int M, int N);
 
-        cout << "\n====== МЕНЮ ======\n"; // Вивід заголовку меню
-        cout << "1 - Завдання 1 (Matrix42)\n"; // Вивід першого пункту меню
-        cout << "2 - Завдання 2 (Matrix60)\n"; // Вивід другого пункту меню
-        cout << "0 - Вихід\n"; // Вивід пункту виходу
-        cout << "Ваш вибір: "; // Запит вибору користувача
-        cin >> choice; // Ввід вибору користувача
+int countIncreasingRows(const int a[][MAX_SIZE], int M, int N);
+void mirrorMatrix(int a[][MAX_SIZE], int M, int N);
 
-        if (choice == 0) { // Якщо вибрано 0
-            cout << "Програму завершено.\n"; // Повідомлення про завершення
-            break; // Вихід з циклу
+void executeTask(int choice);
+
+// ===== ГОЛОВНА ФУНКЦІЯ =====
+int main()
+{
+    int choice;
+
+    do
+    {
+        showMenu();
+        cin >> choice;
+
+        if (choice == 0)
+        {
+            cout << "Програму завершено.\n";
+        }
+        else if (choice == 1 || choice == 2)
+        {
+            executeTask(choice);
+        }
+        else
+        {
+            cout << "Помилка! Неправильний пункт меню.\n";
         }
 
-        int M, N; 
-        cout << "Введіть кількість рядків M та стовпців N: "; // Запит введення розміру матриці
-        cin >> M >> N; 
+    } while (choice != 0);
 
-        if (M < 2 || M > 20 || N < 2 || N > 20) { // Перевірка, чи розміри в межах 2..20
-            cout << "Помилка! M і N повинні бути в межах від 2 до 20.\n"; // Повідомлення про помилку
-            continue; // Повернення до меню
+    return 0;
+}
+
+// ===== ВИВЕДЕННЯ МЕНЮ =====
+void showMenu()
+{
+    cout << "\n========== МЕНЮ ==========\n";
+    cout << "1 - Завдання 1 (Matrix42)\n";
+    cout << "2 - Завдання 2 (Matrix60)\n";
+    cout << "0 - Вихід\n";
+    cout << "Ваш вибір: ";
+}
+
+// ===== ЗЧИТУВАННЯ РОЗМІРУ =====
+bool readSize(int &M, int &N)
+{
+    cout << "Введіть кількість рядків M та стовпців N: ";
+    cin >> M >> N;
+
+    if (M < MIN_SIZE || M > MAX_SIZE ||
+        N < MIN_SIZE || N > MAX_SIZE)
+    {
+        cout << "Помилка! Розміри повинні бути в межах ["
+             << MIN_SIZE << "; " << MAX_SIZE << "].\n";
+        return false;
+    }
+
+    return true;
+}
+
+// ===== ВВЕДЕННЯ МАТРИЦІ =====
+void inputMatrix(int a[][MAX_SIZE], int M, int N)
+{
+    cout << "Введіть елементи матриці:\n";
+
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            cin >> a[i][j];
         }
+    }
+}
 
-        int a[20][20]; // Оголошення матриці максимального розміру 20×20
+// ===== ВИВЕДЕННЯ МАТРИЦІ =====
+void outputMatrix(const int a[][MAX_SIZE], int M, int N)
+{
+    cout << "Матриця:\n";
 
-        cout << "Введіть елементи матриці (" << M << "x" << N << "):\n"; // Запит введення елементів матриці
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            cout << a[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
 
-        for (int i = 0; i < M; i++) { // Цикл по рядках
-            for (int j = 0; j < N; j++) { // Цикл по стовпцях
-                cin >> a[i][j]; // Ввід елементу матриці
+// ===== ЗАВДАННЯ 1 =====
+// Кількість рядків, строго впорядкованих за зростанням
+int countIncreasingRows(const int a[][MAX_SIZE], int M, int N)
+{
+    int count = 0;
+
+    for (int i = 0; i < M; i++)
+    {
+        bool isIncreasing = true;
+
+        for (int j = 0; j < N - 1; j++)
+        {
+            if (a[i][j] >= a[i][j + 1])
+            {
+                isIncreasing = false;
+                break;
             }
         }
 
-        if (choice == 1) { // Якщо вибрано завдання 1
+        if (isIncreasing)
+            count++;
+    }
 
-            int countRows = 0; // Лічильник рядків, впорядкованих за зростанням
+    return count;
+}
 
-            for (int i = 0; i < M; i++) { // Перебір всіх рядків
-                bool increasing = true; // Припускаємо, що рядок впорядкований за зростанням
-
-                for (int j = 0; j < N - 1; j++) { // Перебір елементів рядка
-                    if (a[i][j] >= a[i][j + 1]) { // Якщо елемент не менший за наступний
-                        increasing = false; // Рядок не є впорядкованим за зростанням
-                        break; // Вихід з циклу перевірки
-                    }
-                }
-
-                if (increasing) { // Якщо рядок впорядкований за зростанням
-                    countRows++; // Збільшуємо лічильник
-                }
-            }
-
-            cout << "Кількість рядків, впорядкованих за зростанням: " << countRows << endl; // Вивід результату
+// ===== ЗАВДАННЯ 2 =====
+// Дзеркальне відображення відносно вертикальної осі
+void mirrorMatrix(int a[][MAX_SIZE], int M, int N)
+{
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N / 2; j++)
+        {
+            int temp = a[i][j];
+            a[i][j] = a[i][N - 1 - j];
+            a[i][N - 1 - j] = temp;
         }
-        else if (choice == 2) { // Якщо вибрано завдання 2
+    }
+}
 
-            for (int i = 0; i < M; i++) { // Перебір рядків
-                for (int j = 0; j < N / 2; j++) { // Перебір половини стовпців
-                    int temp = a[i][j]; // Збереження поточного елементу у тимчасову змінну
-                    a[i][j] = a[i][N - 1 - j]; // Переносимо симетричний елемент з іншого боку
-                    a[i][N - 1 - j] = temp; // Записуємо збережений елемент у симетричну позицію
-                }
-            }
+// ===== ВИКОНАННЯ ОБРАНОГО ЗАВДАННЯ =====
+void executeTask(int choice)
+{
+    int M, N;
 
-            cout << "Матриця після дзеркального відображення відносно вертикальної осі:\n"; // Вивід повідомлення
+    if (!readSize(M, N))
+        return;
 
-            for (int i = 0; i < M; i++) { // Цикл по рядках
-                for (int j = 0; j < N; j++) { // Цикл по стовпцях
-                    cout << a[i][j] << " "; // Вивід елементу матриці
-                }
-                cout << endl; // Перехід на новий рядок
-            }
-        }
-        else { // Якщо вибір неправильний
-            cout << "Помилка! Неправильний пункт меню.\n"; // Вивід повідомлення про помилку
-        }
+    int matrix[MAX_SIZE][MAX_SIZE];
 
-    } while (choice != 0); // Повторювати цикл поки не вибрано вихід
+    inputMatrix(matrix, M, N);
 
-    return 0; // Завершення програми
+    if (choice == 1)
+    {
+        int result = countIncreasingRows(matrix, M, N);
+
+        cout << "Кількість рядків, впорядкованих за зростанням: "
+             << result << endl;
+    }
+    else if (choice == 2)
+    {
+        mirrorMatrix(matrix, M, N);
+
+        cout << "Матриця після дзеркального відображення:\n";
+        outputMatrix(matrix, M, N);
+    }
 }
